@@ -61,7 +61,7 @@
 				</a-entity>
 
 				<a-entity>
-					<a-box position="0 1.25 -5" color="#EF2D5E"></a-sphere>
+					<a-box id="mybox" position="0 1.25 0" dynamic-body color="#EF2D5E"></a-sphere>
 
 					<a-animation attribute="rotation"
                dur="10000"
@@ -74,18 +74,45 @@
 				<a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
 				-->
 				<a-sky color="#ECECEC"></a-sky>
+				
+				
 				<a-entity id="mycamera" rotation="0 0 0" position="0 0 6">
 					<a-entity id = "myraycaster" raycaster-helper material="opacity: 1" raycaster="objects: .collidable" position="0 1 0" rotation="0 0 0">
 					</a-entity>
 					
-					<a-box id="mybox" position=" 0 0 -2" depth="0.5" height="1.8" width="0.5" rotation="0 0 0" color="green" static-body="shape: box; mass: 2"></a-box>
+					<a-box position=" 0 0 -2" depth="0.5" height="1.8" width="0.5" rotation="0 0 0" color="green"></a-box>
 					
 					<a-camera wasd-controls-enabled="false"></a-camera>
 				</a-entity>
+								<a-plane position="0 3 2" rotation="0 0 0" width="0.5" height="0.5" color="yellow" ></a-plane>
+
 			</a-scene>
 
 		</body>
 		<script>
+		var world, mass, body, shape, timeStep=1/60,
+         camera, scene, renderer, geometry, material, mesh;
+		 
+		function initCannon() {
+
+          world = new CANNON.World();
+          world.gravity.set(0,0,0);
+          world.broadphase = new CANNON.NaiveBroadphase();
+          world.solver.iterations = 10;
+
+          shape = new CANNON.Box(new CANNON.Vec3(1,1,1));
+          mass = 1;
+          body = new CANNON.Body({
+            mass: 1
+          });
+          body.addShape(shape);
+          body.angularVelocity.set(0,10,0);
+          body.angularDamping = 0.5;
+          world.addBody(body);
+      }		
+		
+		initCannon();
+		
     var cam = document.getElementById("mycamera")
     var camPos = cam.getAttribute("position");
 	var camRot = cam.getAttribute("rotation");
@@ -104,13 +131,13 @@
         console.log("up");
         cam.setAttribute("position", camPos);
             //alert('up');
-			/*
+			
 			myBox.body.applyImpulse(
 			          new CANNON.Vec3(0, 1, -1),
 					  new CANNON.Vec3().copy(el.getComputedAttribute('position'))
 			
 			);
-			*/
+			
             break;
         case 39:
         camPos.x++;
@@ -137,7 +164,7 @@
             //alert('left');
             break;
     }
-			console.log(camPos);
+			//console.log(camPos);
 
 };
 		</script>
